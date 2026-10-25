@@ -300,8 +300,8 @@ function hook(){
   var all=c>=x.n,dots='',i;
   for(i=0;i<x.n;i++)dots+='<i class="'+(i<c?'d':i==c?'n':'')+'"></i>';
   b.insertAdjacentHTML('beforebegin','<div class="card"><div class="row sp"><b>'+(all?'Alle Sätze erledigt':'Satz '+(c+1)+' von '+x.n)+'</b><span class="mu">Pause '+x.p+' s</span></div><div class="kps">'+dots+'</div></div><button class="btn" id="kpB" style="padding:20px;font-size:19px">'+(all?'Nochmal starten':'Satz abgeschlossen')+'</button>');
-  document.getElementById('kpB').onclick=function(){au();if(all){KP[x.k]=0;draw();return}stepDone(x,c+1)}
-}
+    b.remove();
+  document.getElementById('kpB').onclick=function(){au();if(all){KP[x.k]=0;S.done[x.k]=false;sv();draw();return}stepDone(x,c+1)}
 function stepDone(x,c){KP[x.k]=c;if(c>=x.n){S.done[x.k]=true;sv();finish(x)}else rest(x,c)}
 function rest(x,c){
   dur=x.p;end=Date.now()+dur*1000;last=-1;

@@ -37,6 +37,24 @@ input[type=range]{width:100%;accent-color:var(--ac)}textarea,input[type=text]{wi
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stats .card{text-align:center;margin:0}.stats b{font-size:22px;display:block;color:var(--ac)}
 .fig{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 0}.fig svg{display:block;width:100%;height:auto}
 .hero2{position:relative;overflow:hidden;border-radius:20px;padding:22px 18px 20px;background:radial-gradient(circle at 85% 10%,rgba(61,220,132,.3),transparent 55%),linear-gradient(160deg,rgba(61,220,132,.22),var(--card) 75%);border:1px solid var(--line);margin-top:12px}.hero2 .bg{position:absolute;right:-30px;top:-20px;width:170px;opacity:.2;color:var(--ac)}.hero2 h1{position:relative;font-size:30px;line-height:1.1;margin:6px 0 0}.today{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--ac);border-radius:18px;padding:16px;margin:14px 0}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mini div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;font-size:12px;color:var(--mu)}.mini b{display:block;font-size:18px;color:var(--tx);margin-bottom:2px}
+/* Größere Fenster und Schrift */
+html,body{font-size:18px}
+.mu{font-size:16px}
+h1{font-size:32px}h2{font-size:26px}h3{font-size:18px}
+.card{padding:20px;border-radius:18px;margin:14px 0}
+.card b{font-size:20px}
+.item{padding:18px;gap:14px;border-radius:18px;margin:10px 0;font-size:18px}
+.ico{width:44px}
+.chk{width:32px;height:32px;font-size:18px}
+.btn{padding:18px;font-size:18px}
+.week{gap:7px}.week div{padding:12px 0;font-size:16px}.week small{font-size:12px}
+.hero,.hero2{padding:28px 22px}
+.today{padding:22px;gap:18px}
+.mini div{padding:18px 8px;font-size:14px}.mini b{font-size:24px}
+.stats .card{padding:18px 8px}.stats b{font-size:28px}
+.fig{border-radius:18px}
+nav button{font-size:13px;padding:10px 0}nav button svg{width:28px;height:28px}
+main{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
 </style>
 </head>
 <body>
@@ -161,7 +179,7 @@ h='<div class="row"><button class="back" onclick="go(\'day\','+sd+')">←</butto
 if(v=="prog"){var wk=0;for(var i=0;i<7;i++)if(S.fin[dayDate(i)])wk++;var c={kraft:0,hb:0,spiel:0};
 for(var k in S.fin){if(!S.fin[k])continue;var q=k.split("-"),g=new Date(+q[0],+q[1]-1,+q[2]),pk=PLAN[(g.getDay()+6)%7].k;if(c[pk]!=null)c[pk]++}
 var o=326.7*(1-wk/7);
-h=hdr()+'<h2>Fortschritt</h2><div class="mu">Deine Entwicklung. Schritt für Schritt.</div><div style="text-align:center;margin:16px 0"><svg width="140" height="140" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="'+o+'" transform="rotate(-90 60 60)"/><text x="60" y="62" text-anchor="middle" fill="var(--tx)" font-size="24" font-weight="700">'+wk+'/7</text><text x="60" y="80" text-anchor="middle" fill="var(--mu)" font-size="9">Trainingstage diese Woche</text></svg></div>'
+h=hdr()+'<h2>Fortschritt</h2><div class="mu">Deine Entwicklung. Schritt für Schritt.</div><div style="text-align:center;margin:16px 0"><svg width="230" height="230" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="'+o+'" transform="rotate(-90 60 60)"/><text x="60" y="62" text-anchor="middle" fill="var(--tx)" font-size="24" font-weight="700">'+wk+'/7</text><text x="60" y="80" text-anchor="middle" fill="var(--mu)" font-size="9">Trainingstage diese Woche</text></svg></div>'
 +'<div class="stats"><div class="card"><b>'+c.kraft+'</b><span class="mu">Krafteinheiten</span></div><div class="card"><b>'+c.hb+'</b><span class="mu">Handballtraining</span></div><div class="card"><b>'+c.spiel+'</b><span class="mu">Spiele</span></div></div><h3>Letzte 4 Wochen</h3><div class="card">';
 for(var w=3;w>=0;w--){var f=0;for(var i=0;i<7;i++)if(S.fin[dayDate(i,w)])f++;var pc=Math.round(f/7*100);h+='<div class="row sp"><span>'+(w==0?'Diese Woche':'Vor '+w+' Woche'+(w>1?'n':''))+'</span><b>'+pc+' %</b></div><div class="bar"><i style="width:'+pc+'%"></i></div>'}
 h+='</div>'}
@@ -187,218 +205,10 @@ function homeHTML(){var p=PLAN[ti],d=dayDate(ti),n=0,tot=p.ex.length,wk=0,i;
 p.ex.forEach(function(e,j){if(S.done[d+"|"+j])n++});for(i=0;i<7;i++)if(S.fin[dayDate(i)])wk++;
 var pc=Math.round(n/tot*100),hr=now.getHours(),g=hr<11?"Guten Morgen":hr<18?"Hallo":"Guten Abend",bt=S.fin[d]?"Heute erledigt ✓":n?"Weitermachen":p.k=="rest"?"Erholung ansehen":"Training starten";
 return hdr()+'<div class="hero2"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".8">'+IC.ball+'</svg><div class="mu" style="position:relative">'+now.toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"})+'</div><h1>'+g+',<br>Kreisläufer.</h1><p class="mu" style="position:relative;margin:8px 0 0">Stark im Kopf. Stark im Körper. Stark im Spiel.</p></div>'
-+'<div class="today"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="var(--ac)" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="'+(163.4*(1-pc/100))+'" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" fill="var(--tx)" font-size="15" font-weight="700">'+n+'/'+tot+'</text></svg><div style="flex:1"><div class="mu">HEUTE</div><b style="font-size:18px">'+p.t+'</b><div class="mu">'+p.m+'</div></div></div><button class="btn" style="margin-top:0" onclick="go(\'day\','+ti+')">'+bt+'</button>'
++'<div class="today"><svg width="108" height="108" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="var(--ac)" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="'+(163.4*(1-pc/100))+'" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" fill="var(--tx)" font-size="15" font-weight="700">'+n+'/'+tot+'</text></svg><div style="flex:1"><div class="mu">HEUTE</div><b style="font-size:18px">'+p.t+'</b><div class="mu">'+p.m+'</div></div></div><button class="btn" style="margin-top:0" onclick="go(\'day\','+ti+')">'+bt+'</button>'
 +'<div class="mini"><div><b>'+wk+'/7</b>Diese Woche</div><div onclick="go(\'rec\')"><b>'+(S.chk[d]?"✓":"–")+'</b>Check-in</div><div><b>'+AB[(ti+1)%7]+'</b>'+LB[(ti+1)%7]+'</div></div>'
 +'<div class="card"><b>Deine Woche</b><div class="week">'+AB.map(function(n,i){return '<div class="'+(i==ti?'t':'')+(S.fin[dayDate(i)]?' f':'')+'" onclick="go(\'day\','+i+')">'+n+'<small>'+LB[i]+'</small>'+(S.fin[dayDate(i)]?'✓':'·')+'</div>'}).join("")+'</div></div><p class="mu" style="text-align:center;margin-top:24px">„Disziplin ist der Schlüssel zu deinem nächsten Level.“</p>'}
 ld();draw();
-</script>
-<div id="rt" style="display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--card,#141a17);border:1px solid var(--line,#222b27);color:var(--tx,#f2f6f4);border-radius:20px;padding:12px 18px;box-shadow:0 8px 24px rgba(0,0,0,.4);align-items:center;gap:14px;font:600 16px system-ui">
-  <span>Pause</span>
-  <b id="rtt" style="font-size:28px;color:var(--ac,#3ddc84);min-width:64px;text-align:center">0:00</b>
-  <button id="rtp" style="background:none;border:1px solid var(--line,#222b27);color:inherit;border-radius:12px;padding:6px 10px;font:inherit">+15s</button>
-  <button id="rts" style="background:var(--ac,#3ddc84);border:0;color:var(--ac2,#062112);border-radius:12px;padding:6px 12px;font:inherit">Stopp</button>
-</div>
-<script>
-(function(){
-  var PAUSE = 90; /* Sekunden, hier änderbar */
-  var box=document.getElementById('rt'), out=document.getElementById('rtt');
-  var end=0, timer=null, last=-1, ctx=null;
-
-  function audio(){
-    try{
-      if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)();
-      if(ctx.state==='suspended') ctx.resume();
-    }catch(e){}
-  }
-  document.addEventListener('click', audio);
-
-  function beep(freq, dur){
-    if(!ctx) return;
-    try{
-      var o=ctx.createOscillator(), g=ctx.createGain();
-      o.frequency.value=freq; o.connect(g); g.connect(ctx.destination);
-      g.gain.setValueAtTime(0.3, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+dur);
-      o.start(); o.stop(ctx.currentTime+dur);
-    }catch(e){}
-  }
-
-  function fmt(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
-
-  function stop(){ clearInterval(timer); timer=null; box.style.display='none'; }
-
-  function tick(){
-    var rem=Math.ceil((end-Date.now())/1000);
-    if(rem<=0){
-      out.textContent='0:00';
-      beep(880,0.25); setTimeout(function(){beep(1320,0.5);},300);
-      clearInterval(timer); timer=null;
-      setTimeout(stop,2000);
-      return;
-    }
-    out.textContent=fmt(rem);
-    if(rem!==last && rem<=3) beep(660,0.15);
-    last=rem;
-  }
-
-  window.startPause=function(sec){
-    audio();
-    end=Date.now()+(sec||PAUSE)*1000; last=-1;
-    box.style.display='flex';
-    clearInterval(timer); tick(); timer=setInterval(tick,250);
-  };
-
-  document.getElementById('rtp').onclick=function(){ end+=15000; };
-  document.getElementById('rts').onclick=stop;
-
-  /* automatisch starten, wenn ein Haken gesetzt wird */
-  new MutationObserver(function(list){
-    list.forEach(function(m){
-      var el=m.target, was=(m.oldValue||'').split(' ').indexOf('on')>-1;
-      if(el.classList && el.classList.contains('chk') && el.classList.contains('on') && !was){
-        window.startPause();
-      }
-    });
-  }).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],attributeOldValue:true});
-})();
-</script>
-<style>
-#kpO{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:calc(18px + env(safe-area-inset-top,0px)) max(18px,calc((100vw - 520px)/2)) calc(18px + env(safe-area-inset-bottom,0px))}
-#kpO.on{display:flex}
-#kpO .l{text-align:center;color:var(--mu);font-size:18px}
-#kpO .r{position:relative;width:min(78vw,50vh,340px);aspect-ratio:1;margin:8px auto 0}
-#kpO .r svg{width:100%;height:100%;transform:rotate(-90deg)}
-#kpO .r circle{fill:none;stroke-width:12}
-#kpO .r .g{stroke:var(--line)}
-#kpO .r .f{stroke:var(--ac);stroke-linecap:round;transition:stroke-dashoffset .25s linear}
-#kpO .r div{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
-#kpO .r b{font-size:clamp(56px,16vw,88px);font-variant-numeric:tabular-nums;line-height:1}
-#kpO .r span{color:var(--mu);font-size:14px}
-#kpO .rw{display:flex;gap:10px}
-#kpO .gh{background:none;color:var(--tx);border:1px solid var(--line)}
-.kps{display:flex;gap:8px;margin:10px 0}.kps i{flex:1;height:8px;border-radius:4px;background:var(--line)}.kps i.d{background:var(--ac)}.kps i.n{background:var(--mu)}
-</style>
-<div id="kpO"></div>
-<script>
-(function(){
-var KP={},ctx=null,tm=null,end=0,dur=0,last=-1,C=2*Math.PI*104,O=document.getElementById('kpO');
-function au(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume()}catch(x){}}
-document.addEventListener('click',au);
-function bp(f,d,g){if(!ctx)return;try{var o=ctx.createOscillator(),n=ctx.createGain();o.type='square';o.frequency.value=f;o.connect(n);n.connect(ctx.destination);n.gain.setValueAtTime(g||.5,ctx.currentTime);n.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+d);o.start();o.stop(ctx.currentTime+d)}catch(x){}}
-function fm(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-function info(){
-  if(v!=="ex")return null;
-  var e=PLAN[sd].ex[se],m=/^(\d+)\s*×/.exec(e[1]),p=/Pause\s*(\d+)\s*s/.exec(e[2]);
-  if(!m||!p)return null;
-  return{k:dayDate(sd)+"|"+se,n:+m[1],p:+p[1],d:sd,e:se}
-}
-var D0=draw;draw=function(){D0();hook()};
-function hook(){
-  var x=info();if(!x)return;
-  var c=KP[x.k];if(c==null)c=S.done[x.k]?x.n:0;
-  var bs=document.querySelectorAll('#app .btn'),b=bs[bs.length-1];if(!b)return;
-  var all=c>=x.n,dots='',i;
-  for(i=0;i<x.n;i++)dots+='<i class="'+(i<c?'d':i==c?'n':'')+'"></i>';
-  b.insertAdjacentHTML('beforebegin','<div class="card"><div class="row sp"><b>'+(all?'Alle Sätze erledigt':'Satz '+(c+1)+' von '+x.n)+'</b><span class="mu">Pause '+x.p+' s</span></div><div class="kps">'+dots+'</div></div><button class="btn" id="kpB" style="padding:20px;font-size:19px">'+(all?'Nochmal starten':'Satz abgeschlossen')+'</button>');
-    b.remove();
-  document.getElementById('kpB').onclick=function(){au();if(all){KP[x.k]=0;S.done[x.k]=false;sv();draw();return}stepDone(x,c+1)}
-function stepDone(x,c){KP[x.k]=c;if(c>=x.n){S.done[x.k]=true;sv();finish(x)}else rest(x,c)}
-function rest(x,c){
-  dur=x.p;end=Date.now()+dur*1000;last=-1;
-  O.innerHTML='<div class="l">Pause nach Satz '+c+'</div><div class="r"><svg viewBox="0 0 240 240"><circle class="g" cx="120" cy="120" r="104"/><circle class="f" id="kpF" cx="120" cy="120" r="104" style="stroke-dasharray:'+C+'"/></svg><div><b id="kpT"></b><span id="kpS">bis Satz '+(c+1)+'</span></div></div><div class="rw" id="kpR"><button class="btn gh" id="kpP">+15 s</button><button class="btn gh" id="kpK">Überspringen</button></div><button class="btn" id="kpN" style="display:none;padding:20px;font-size:19px">Nächster Satz</button>';
-  O.classList.add('on');
-  document.getElementById('kpP').onclick=function(){end+=15000;dur+=15};
-  document.getElementById('kpK').onclick=closeO;
-  document.getElementById('kpN').onclick=closeO;
-  clearInterval(tm);tick();tm=setInterval(tick,250)
-}
-function tick(){
-  var r=Math.ceil((end-Date.now())/1000),F=document.getElementById('kpF'),T=document.getElementById('kpT');
-  if(!F)return;
-  if(r<=0){
-    clearInterval(tm);tm=null;
-    T.textContent='0:00';F.style.strokeDashoffset=C;
-    document.getElementById('kpS').textContent='Pause vorbei';
-    document.getElementById('kpR').style.display='none';
-    document.getElementById('kpN').style.display='block';
-    bp(784,.15,.7);setTimeout(function(){bp(988,.15,.7)},180);setTimeout(function(){bp(1319,.7,.8)},360);
-    try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(x){}
-    return
-  }
-  T.textContent=fm(r);
-  F.style.strokeDashoffset=C*(1-Math.max(0,Math.min(1,r/dur)));
-  if(r!==last&&r<=3)bp(r===1?1175:988,.2,.6);
-  last=r
-}
-function closeO(){clearInterval(tm);tm=null;O.classList.remove('on');O.innerHTML='';draw()}
-function finish(x){
-  var nx=PLAN[x.d].ex[x.e+1];
-  O.innerHTML='<h2 style="text-align:center;margin:0">Übung fertig</h2><p class="l">Alle Sätze abgeschlossen.</p><button class="btn" id="kpX" style="padding:20px;font-size:19px">'+(nx?'Nächste Übung':'Zurück zum Training')+'</button>';
-  O.classList.add('on');
-  document.getElementById('kpX').onclick=function(){O.classList.remove('on');O.innerHTML='';if(nx)go('ex',x.d,x.e+1);else go('day',x.d)}
-}
-})();
-</script>
-<script>
-(function(){
-  var D1=draw;
-  draw=function(){
-    D1();
-    if(document.getElementById('kpB')){
-      var bs=document.querySelectorAll('#app .btn');
-      for(var i=0;i<bs.length;i++){
-        if(bs[i].id!=='kpB'&&/Als (erledigt|offen) markieren/.test(bs[i].textContent))bs[i].remove();
-      }
-    }
-  };
-})();
-</script>
-<script>
-(function(){
-  var D1=draw;
-  draw=function(){
-    D1();
-    if(document.getElementById('kpB')){
-      var bs=document.querySelectorAll('#app .btn');
-      for(var i=0;i<bs.length;i++){
-        if(bs[i].id!=='kpB'&&/Als (erledigt|offen) markieren/.test(bs[i].textContent))bs[i].remove();
-      }
-    }
-  };
-  document.addEventListener('click',function(ev){
-    var t=ev.target.closest&&ev.target.closest('#kpB');
-    if(t&&/Nochmal/.test(t.textContent)&&v==='ex'){S.done[dayDate(sd)+'|'+se]=false;sv()}
-  },true);
-})();
-</script>
-<script>
-(function(){
-  var D2=draw;
-  draw=function(){
-    D2();
-    if(v!=="ex")return;
-    var A=document.getElementById('app'),k=dayDate(sd)+"|"+se,B=document.getElementById('kpB');
-    if(B){
-      var c=B.previousElementSibling,t='';
-      if(c&&c.querySelector&&c.querySelector('.kps')){t=c.querySelector('b').textContent;c.remove()}
-      var m=/Satz (\d+) von (\d+)/.exec(t);
-      var all=A.querySelectorAll('.btn');for(var i=0;i<all.length;i++){if(all[i]!==B&&/Als (erledigt|offen) markieren/.test(all[i].textContent))all[i].remove()}
-      B.textContent=!m?'Nochmal starten':(m[1]===m[2]?'Satz '+m[1]+' von '+m[2]+' fertig':'Satz '+m[1]+' von '+m[2]+' fertig – Pause starten');
-      return;
-    }
-    var bs=A.querySelectorAll('.btn'),b=bs[bs.length-1];
-    if(b&&/Als (erledigt|offen) markieren/.test(b.textContent)){
-      var d=S.done[k];
-      b.textContent=d?'Erledigt ✓':'Übung abgeschlossen';
-      b.style.padding='20px';b.style.fontSize='19px';
-      b.onclick=function(){if(!d){S.done[k]=true;sv()}go('day',sd)};
-    }
-  };
-  document.addEventListener('click',function(ev){
-    var t=ev.target.closest&&ev.target.closest('#kpB');
-    if(t&&/Nochmal/.test(t.textContent)&&v==='ex'){S.done[dayDate(sd)+'|'+se]=false;sv()}
-  },true);
-})();
 </script>
 <style>
 #kqO{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:calc(18px + env(safe-area-inset-top,0px)) max(18px,calc((100vw - 520px)/2)) calc(18px + env(safe-area-inset-bottom,0px))}
@@ -443,7 +253,7 @@ function hook(){
 function stepDone(x,c){KQ[x.k]=c;if(c>=x.n){S.done[x.k]=true;sv();finish(x)}else rest(x,c)}
 function rest(x,c){
   dur=x.p;end=Date.now()+dur*1000;last=-1;
-  O.innerHTML='<div class="l">Pause nach Satz '+c+'</div><div class="r"><svg viewBox="0 0 240 240"><circle class="g" cx="120" cy="120" r="104"/><circle class="f" id="kqF" cx="120" cy="120" r="104" style="stroke-dasharray:'+C+'"/></svg><div><b id="kqT"></b><span id="kqS">bis Satz '+(c+1)+'</span></div></div><div class="rw" id="kqR"><button class="btn gh" id="kqP">+15 s</button><button class="btn gh" id="kqK">Überspringen</button></div><button class="btn" id="kqN" style="display:none;padding:20px;font-size:19px">Nächster Satz</button>';
+  O.innerHTML='<div class="l">Pause nach Satz '+c+'</div><div class="r"><svg viewBox="0 0 240 240"><circle class="g" cx="120" cy="120" r="104"/><circle class="f" id="kqF" cx="120" cy="120" r="104" style="stroke-dasharray:'+C+'"/></svg><div><b id="kqT"></b><span id="kqS">bis Satz '+(c+1)+'</span></div></div><div class="rw" id="kqR"><button class="btn gh" id="kqP">+15 s</button><button class="btn gh" id="kqK">Überspringen</button></div><button class="btn" id="kqN" style="display:none;padding:32px;font-size:26px">Nächster Satz</button>';
   O.classList.add('on');
   document.getElementById('kqP').onclick=function(){end+=15000;dur+=15};
   document.getElementById('kqK').onclick=closeO;
@@ -471,7 +281,7 @@ function tick(){
 function closeO(){clearInterval(tm);tm=null;O.classList.remove('on');O.innerHTML='';draw()}
 function finish(x){
   var nx=PLAN[x.d].ex[x.e+1];
-  O.innerHTML='<h2 style="text-align:center;margin:0">Übung fertig</h2><p class="l">Alle Sätze abgeschlossen.</p><button class="btn" id="kqX" style="padding:20px;font-size:19px">'+(nx?'Nächste Übung':'Zurück zum Training')+'</button>';
+  O.innerHTML='<h2 style="text-align:center;margin:0">Übung fertig</h2><p class="l">Alle Sätze abgeschlossen.</p><button class="btn" id="kqX" style="padding:32px;font-size:26px">'+(nx?'Nächste Übung':'Zurück zum Training')+'</button>';
   O.classList.add('on');
   document.getElementById('kqX').onclick=function(){O.classList.remove('on');O.innerHTML='';if(nx)go('ex',x.d,x.e+1);else go('day',x.d)}
 }

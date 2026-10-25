@@ -371,5 +371,34 @@ function finish(x){
   },true);
 })();
 </script>
+<script>
+(function(){
+  var D2=draw;
+  draw=function(){
+    D2();
+    if(v!=="ex")return;
+    var A=document.getElementById('app'),k=dayDate(sd)+"|"+se,B=document.getElementById('kpB');
+    if(B){
+      var c=B.previousElementSibling,t='';
+      if(c&&c.querySelector&&c.querySelector('.kps')){t=c.querySelector('b').textContent;c.remove()}
+      var m=/Satz (\d+) von (\d+)/.exec(t);
+      var all=A.querySelectorAll('.btn');for(var i=0;i<all.length;i++){if(all[i]!==B&&/Als (erledigt|offen) markieren/.test(all[i].textContent))all[i].remove()}
+      B.textContent=!m?'Nochmal starten':(m[1]===m[2]?'Satz '+m[1]+' von '+m[2]+' fertig':'Satz '+m[1]+' von '+m[2]+' fertig – Pause starten');
+      return;
+    }
+    var bs=A.querySelectorAll('.btn'),b=bs[bs.length-1];
+    if(b&&/Als (erledigt|offen) markieren/.test(b.textContent)){
+      var d=S.done[k];
+      b.textContent=d?'Erledigt ✓':'Übung abgeschlossen';
+      b.style.padding='20px';b.style.fontSize='19px';
+      b.onclick=function(){if(!d){S.done[k]=true;sv()}go('day',sd)};
+    }
+  };
+  document.addEventListener('click',function(ev){
+    var t=ev.target.closest&&ev.target.closest('#kpB');
+    if(t&&/Nochmal/.test(t.textContent)&&v==='ex'){S.done[dayDate(sd)+'|'+se]=false;sv()}
+  },true);
+})();
+</script>
 </body>
 </html>

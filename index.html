@@ -192,5 +192,75 @@ return hdr()+'<div class="hero2"><svg class="bg" viewBox="0 0 24 24" fill="none"
 +'<div class="card"><b>Deine Woche</b><div class="week">'+AB.map(function(n,i){return '<div class="'+(i==ti?'t':'')+(S.fin[dayDate(i)]?' f':'')+'" onclick="go(\'day\','+i+')">'+n+'<small>'+LB[i]+'</small>'+(S.fin[dayDate(i)]?'✓':'·')+'</div>'}).join("")+'</div></div><p class="mu" style="text-align:center;margin-top:24px">„Disziplin ist der Schlüssel zu deinem nächsten Level.“</p>'}
 ld();draw();
 </script>
+<div id="rt" style="display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--card,#141a17);border:1px solid var(--line,#222b27);color:var(--tx,#f2f6f4);border-radius:20px;padding:12px 18px;box-shadow:0 8px 24px rgba(0,0,0,.4);align-items:center;gap:14px;font:600 16px system-ui">
+  <span>Pause</span>
+  <b id="rtt" style="font-size:28px;color:var(--ac,#3ddc84);min-width:64px;text-align:center">0:00</b>
+  <button id="rtp" style="background:none;border:1px solid var(--line,#222b27);color:inherit;border-radius:12px;padding:6px 10px;font:inherit">+15s</button>
+  <button id="rts" style="background:var(--ac,#3ddc84);border:0;color:var(--ac2,#062112);border-radius:12px;padding:6px 12px;font:inherit">Stopp</button>
+</div>
+<script>
+(function(){
+  var PAUSE = 90; /* Sekunden, hier änderbar */
+  var box=document.getElementById('rt'), out=document.getElementById('rtt');
+  var end=0, timer=null, last=-1, ctx=null;
+
+  function audio(){
+    try{
+      if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)();
+      if(ctx.state==='suspended') ctx.resume();
+    }catch(e){}
+  }
+  document.addEventListener('click', audio);
+
+  function beep(freq, dur){
+    if(!ctx) return;
+    try{
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.frequency.value=freq; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.3, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+dur);
+      o.start(); o.stop(ctx.currentTime+dur);
+    }catch(e){}
+  }
+
+  function fmt(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+
+  function stop(){ clearInterval(timer); timer=null; box.style.display='none'; }
+
+  function tick(){
+    var rem=Math.ceil((end-Date.now())/1000);
+    if(rem<=0){
+      out.textContent='0:00';
+      beep(880,0.25); setTimeout(function(){beep(1320,0.5);},300);
+      clearInterval(timer); timer=null;
+      setTimeout(stop,2000);
+      return;
+    }
+    out.textContent=fmt(rem);
+    if(rem!==last && rem<=3) beep(660,0.15);
+    last=rem;
+  }
+
+  window.startPause=function(sec){
+    audio();
+    end=Date.now()+(sec||PAUSE)*1000; last=-1;
+    box.style.display='flex';
+    clearInterval(timer); tick(); timer=setInterval(tick,250);
+  };
+
+  document.getElementById('rtp').onclick=function(){ end+=15000; };
+  document.getElementById('rts').onclick=stop;
+
+  /* automatisch starten, wenn ein Haken gesetzt wird */
+  new MutationObserver(function(list){
+    list.forEach(function(m){
+      var el=m.target, was=(m.oldValue||'').split(' ').indexOf('on')>-1;
+      if(el.classList && el.classList.contains('chk') && el.classList.contains('on') && !was){
+        window.startPause();
+      }
+    });
+  }).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],attributeOldValue:true});
+})();
+</script>
 </body>
 </html>

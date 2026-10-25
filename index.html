@@ -339,5 +339,19 @@ function finish(x){
 }
 })();
 </script>
+<script>
+(function(){
+  var D1=draw;
+  draw=function(){
+    D1();
+    if(document.getElementById('kpB')){
+      var bs=document.querySelectorAll('#app .btn');
+      for(var i=0;i<bs.length;i++){
+        if(bs[i].id!=='kpB'&&/Als (erledigt|offen) markieren/.test(bs[i].textContent))bs[i].remove();
+      }
+    }
+  };
+})();
+</script>
 </body>
 </html>

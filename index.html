@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kreisläufer Pro</title>
+<style>
+:root{--bg:#0b0f0d;--card:#141a17;--line:#222b27;--tx:#f2f6f4;--mu:#8a978f;--ac:#3ddc84;--ac2:#06210f;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f6f4;--card:#fff;--line:#dde5e0;--tx:#0f1a14;--mu:#5d6b63;--ac:#12a150;--ac2:#fff;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#0b0f0d;--card:#141a17;--line:#222b27;--tx:#f2f6f4;--mu:#8a978f;--ac:#3ddc84;--ac2:#06210f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+h1{font-size:28px;margin:8px 0 2px}h2{font-size:22px;margin:8px 0 2px}h3{margin:18px 0 8px;font-size:16px}
+.mu{color:var(--mu);font-size:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.row{display:flex;align-items:center;gap:12px}.sp{justify-content:space-between}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:14px;padding:13px;margin:8px 0;font:inherit;cursor:pointer}
+.item b{display:block}.ico{width:36px;flex:none;color:var(--ac);display:grid;place-items:center}
+.btn{display:block;width:100%;background:var(--ac);color:var(--ac2);border:0;border-radius:24px;padding:14px;font:600 16px system-ui;margin:14px 0;cursor:pointer}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:var(--ac2);font-size:15px}
+.chk.on{background:var(--ac);border-color:var(--ac)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.week div{text-align:center;padding:8px 0;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-size:13px}
+.week small{display:block;font-size:10px;opacity:.8}.week .t{background:var(--ac);color:var(--ac2);font-weight:700}.week .f{border-color:var(--ac)}
+.hero{border-radius:16px;padding:22px 18px;background:linear-gradient(135deg,#0f3d22,var(--card) 70%);border:1px solid var(--line)}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:700;letter-spacing:.5px;color:var(--ac)}
+.top button,.back{background:none;border:0;color:var(--tx);cursor:pointer;padding:4px}
+.back{font-size:24px;padding:4px 8px 4px 0}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;background:none;border:0;color:var(--mu);font:12px system-ui;padding:6px 0;cursor:pointer}
+nav button svg{display:block;margin:0 auto 2px}nav .on{color:var(--ac)}
+.bar{height:9px;border-radius:5px;background:var(--bg);overflow:hidden;margin:4px 0 10px}.bar i{display:block;height:100%;background:var(--ac)}
+input[type=range]{width:100%;accent-color:var(--ac)}textarea,input[type=text]{width:100%;background:var(--bg);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stats .card{text-align:center;margin:0}.stats b{font-size:22px;display:block;color:var(--ac)}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 0}.fig svg{display:block;width:100%;height:auto}
+.hero2{position:relative;overflow:hidden;border-radius:20px;padding:22px 18px 20px;background:radial-gradient(circle at 85% 10%,rgba(61,220,132,.3),transparent 55%),linear-gradient(160deg,rgba(61,220,132,.22),var(--card) 75%);border:1px solid var(--line);margin-top:12px}.hero2 .bg{position:absolute;right:-30px;top:-20px;width:170px;opacity:.2;color:var(--ac)}.hero2 h1{position:relative;font-size:30px;line-height:1.1;margin:6px 0 0}.today{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--ac);border-radius:18px;padding:16px;margin:14px 0}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mini div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;font-size:12px;color:var(--mu)}.mini b{display:block;font-size:18px;color:var(--tx);margin-bottom:2px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="nav"></nav>
+<script>
+var DAYS=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"],AB=["Mo","Di","Mi","Do","Fr","Sa","So"],LB=["Kraft","HT","Stab.","Sprung","HT","Spiel","Spiel"];
+function svg(p,s){return '<svg width="'+(s||24)+'" height="'+(s||24)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'}
+var IC={house:'<path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',heart:'<path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 10c0 5.5-8 11-8 11z"/>',gear:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3.1 3.1"/>',dumb:'<path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/>',ball:'<circle cx="12" cy="12" r="9"/><path d="M3 12c4 0 6-3 9-9M21 12c-4 0-6 3-9 9"/>',person:'<circle cx="12" cy="6" r="3"/><path d="M6 21v-5a6 6 0 0112 0v5"/>',moon:'<path d="M20 14a8 8 0 11-10-10 6 6 0 0010 10z"/>',cup:'<path d="M8 4h8v5a4 4 0 01-8 0zM8 6H4v1a3 3 0 003 3M16 6h4v1a3 3 0 01-3 3M12 13v4M8 20h8"/>'};
+/* Posen: [Rumpf,Oberarm,Unterarm,Oberschenkel A,Unterschenkel A,Oberschenkel B,Unterschenkel B,Höhe] – Winkel von „senkrecht nach unten“, positiv = nach vorn (rechts) */
+var SK="var(--ac)",SH="#2b3a33",FLOOR={push:1,xpush:1,plank:1,bridge:1,dead:1,pike:1,sup:1,climb:1};
+var AN={
+squat:[[[0,80,80,0,0,0,0,0],[20,80,80,55,-12,55,-12,0],[38,80,80,88,-22,88,-22,0]],2.4],
+jsq:[[[38,-40,-40,88,-22,88,-22,0],[15,120,120,40,-15,40,-15,8],[0,175,175,0,0,0,0,26]],1.4],
+pogo:[[[0,20,60,0,-5,0,-5,0],[0,20,60,10,-10,10,-10,10]],.45],
+tuck:[[[38,-30,-30,88,-22,88,-22,0],[20,90,90,110,-10,110,-10,28]],1.3],
+split:[[[5,20,30,80,-5,-25,-85,0],[0,60,60,30,-10,-30,-30,24],[5,20,30,-25,-85,80,-5,0]],1.6],
+lunge:[[[0,0,0,0,0,0,0,0],[2,0,0,50,-5,-10,-40,0],[4,0,0,85,-5,-10,-85,0]],2.2],
+push:[[[63,0,0,-63,-63,-63,-63,0],[72,-45,45,-72,-72,-72,-72,0]],1.8],
+xpush:[[[72,-45,45,-72,-72,-72,-72,0],[63,0,0,-63,-63,-63,-63,16]],1],
+plank:[[[76,0,90,-76,-76,-76,-76,0],[72,0,90,-72,-72,-72,-72,0]],2.4],
+bridge:[[[-90,-90,-90,140,20,115,115,0],[-115,-90,-90,105,10,115,115,0]],1.8,"P"],
+dead:[[[-90,180,180,180,90,180,90,0],[-90,-90,-90,95,95,180,90,0]],2,"P"],
+pike:[[[135,45,45,-12,-12,-12,-12,0],[150,-25,55,-12,-12,-12,-12,0]],2],
+sup:[[[90,90,90,-90,-90,-90,-90,0],[75,120,120,-100,-100,-100,-100,0]],1.6,"P"],
+climb:[[[63,0,0,-63,-63,-63,-63,0],[63,0,0,50,-20,-63,-63,0]],.7],
+sprint:[[[18,-55,30,75,-10,-30,-100,0],[18,60,115,-30,-100,75,-10,6]],.5],
+walk:[[[0,-30,0,25,0,-25,-10,0],[0,30,0,-25,-10,25,0,0]],1.2],
+throw:[[[-10,-120,-60,-20,0,25,10,0],[15,120,80,20,10,-15,-5,0]],.9],
+stretch:[[[0,170,170,0,0,0,0,0],[100,10,10,0,0,0,0,0]],2.6]};
+function pl(p,anc){var r=Math.PI/180,s=function(a){return Math.sin(a*r)},c=function(a){return Math.cos(a*r)},L=function(q,a,l){return[q[0]+l*s(a),q[1]+l*c(a)]},
+N=[38*s(p[0]),-38*c(p[0])],H=[N[0]+12*s(p[0]),N[1]-12*c(p[0])],P=[0,0],E=L(N,p[1],22),W=L(E,p[2],20),KA=L(P,p[3],28),FA=L(KA,p[4],28),KB=L(P,p[5],28),FB=L(KB,p[6],28),J=[H,N,P,E,W,KA,FA,KB,FB],m=-1e9;
+J.forEach(function(q){m=Math.max(m,q[1])});m=Math.max(m,H[1]+9);var dy=116-m-p[7],dx=100-(anc=="P"?0:FA[0]);return J.map(function(q){return[q[0]+dx,q[1]+dy]})}
+function fig(k){var a=AN[k],ps=a[0],d=a[1],anc=a[2],n=ps.length,sq=[],i,J=ps.map(function(p){return pl(p,anc)});
+for(i=0;i<n;i++)sq.push(i);for(i=n-2;i>=0;i--)sq.push(i);var dur=d*(sq.length-1)/2;
+function an(t,f){return '<animate attributeName="'+t+'" values="'+sq.map(function(i){return f(J[i]).toFixed(1)}).join(";")+'" dur="'+dur+'s" repeatCount="indefinite"/>'}
+function ln(fa,fb,col,w,op){var A=fa(J[0]),B=fb(J[0]);return '<line x1="'+A[0].toFixed(1)+'" y1="'+A[1].toFixed(1)+'" x2="'+B[0].toFixed(1)+'" y2="'+B[1].toFixed(1)+'" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round" opacity="'+(op||1)+'">'+an("x1",function(j){return fa(j)[0]})+an("y1",function(j){return fa(j)[1]})+an("x2",function(j){return fb(j)[0]})+an("y2",function(j){return fb(j)[1]})+'</line>'}
+function ci(fa,r,col){var A=fa(J[0]);return '<circle r="'+r+'" fill="'+col+'" cx="'+A[0].toFixed(1)+'" cy="'+A[1].toFixed(1)+'">'+an("cx",function(j){return fa(j)[0]})+an("cy",function(j){return fa(j)[1]})+'</circle>'}
+var g=function(i){return function(j){return j[i]}},mid=function(i1,i2,f){return function(j){return[j[i1][0]+f*(j[i2][0]-j[i1][0]),j[i1][1]+f*(j[i2][1]-j[i1][1])]}},
+ft=Math.abs(ps[0][4])<55,
+leg=function(kn,fo,op){return ln(g(2),g(kn),SK,9,op)+ln(g(kn),g(fo),SK,8,op)};
+return '<svg viewBox="0 0 200 130">'+(FLOOR[k]?'<rect x="14" y="121" width="172" height="6" rx="3" fill="var(--ac)" opacity=".4"/>':'<line x1="10" y1="121" x2="190" y2="121" stroke="var(--line)" stroke-width="2"/>')+''
++leg(7,8,.6)+ln(g(1),g(2),SK,11)+leg(5,6,1)+ln(g(1),g(3),SK,7)+ln(g(3),g(4),SK,6)
++ci(g(0),9,SK)+'</svg>'}
+var PLAN=[
+{t:"Krafttraining mit Weste",k:"kraft",i:"dumb",m:"30 Min · Matte und 6-kg-Weste",ex:[
+["Kniebeugen mit Weste","4 × 8","Pause 90 s","Füße schulterbreit, Rücken gerade, Knie in Richtung der Zehen. Tief runter, in 2 s ab, explosiv hoch.","Spann den Rumpf an, Fersen bleiben am Boden.","squat"],
+["Sprung-Kniebeugen","3 × 6","Pause 90 s","Mit Weste tief absenken, dann so hoch wie möglich abspringen. Weich landen.","Qualität vor Menge, jeder Sprung voll explosiv.","jsq"],
+["Ausfallschritte rückwärts mit Weste","3 × 8 je Bein","Pause 60 s","Großer Schritt zurück, vorderes Knie über dem Fuß, aufrecht bleiben.","Drück dich über die vordere Ferse kraftvoll hoch.","lunge"],
+["Liegestütze mit Weste","4 × 8–12","Pause 75 s","Körper bildet eine Linie, Ellbogen leicht am Körper, Brust fast zum Boden.","Stark für Zweikampf und Wurf: kontrolliert runter, schnell hoch.","push"],
+["Explosive Liegestütze","3 × 5","Pause 90 s","Schnell nach oben drücken, bis die Hände kurz abheben. Weich landen.","Ohne Weste, wenn es sich unsauber anfühlt.","xpush"],
+["Unterarmstütz mit Weste","3 × 40 s","Pause 45 s","Ellbogen unter den Schultern, Po nicht hochziehen, Bauch fest.","Ruhig weiteratmen, Körper bleibt eine Linie.","plank"],
+["Einbeinige Glute Bridge","3 × 10 je Seite","Pause 45 s","Auf dem Rücken, ein Bein gestreckt, Hüfte hoch bis eine Linie entsteht.","Oben 1 s halten und den Po fest anspannen.","bridge"]]},
+{t:"Handballtraining (Mannschaft)",k:"hb",i:"ball",m:"Mannschaftstraining · Fokus Kreis",ex:[
+["Aufwärmen & Mobilisation","10 Min","—","Lockeres Einlaufen, Schultern und Hüfte kreisen, dynamisches Dehnen.","Schultern und Sprunggelenke besonders gründlich.","walk"],
+["Sperre stellen & Absetzen","10 Min","—","Zwischen den Abwehrspielern lösen, Körper breit machen, Anspiel fordern.","Erst Kontakt halten, dann in die Lücke abrollen.","lunge"],
+["Sprints 10 m","6 ×","Pause 45 s","Kurze, explosive Antritte, aufrechter Start, volle Intensität.","Voll erholt starten, Qualität vor Menge.","sprint"],
+["Strecksprünge","3 × 6","Pause 60 s","Aus der Hocke so hoch wie möglich springen, Arme schwingen mit.","Weich landen, Knie leicht gebeugt.","jsq"],
+["Rumpfrotation (Wurfsimulation)","3 × 8 je Seite","Pause 60 s","Aus der Hüfte aufdrehen, Arm nach vorn durchziehen, ohne Ball oder mit Ball.","Kraft kommt aus Hüfte und Rumpf, nicht nur aus dem Arm.","throw"]]},
+{t:"Stabilität & Schulter",k:"stab",i:"person",m:"25 Min · Matte und Weste",ex:[
+["Pike-Liegestütze","3 × 8","Pause 60 s","Hüfte hoch, Körper bildet ein umgedrehtes V, Kopf zwischen die Arme senken.","Stärkt die Schulter für den Wurf.","pike"],
+["Superman","3 × 10","Pause 45 s","Bauchlage, Arme und Beine gleichzeitig heben, 2 s halten.","Nacken lang, Blick zum Boden.","sup"],
+["Mountain Climbers","3 × 30 s","Pause 45 s","Im Stütz die Knie schnell abwechselnd zur Brust ziehen.","Hüfte bleibt unten, Tempo hoch.","climb"],
+["Dead Bugs","3 × 8 je Seite","Pause 45 s","Rücken am Boden, gegenüberliegender Arm und Bein langsam strecken.","Unterer Rücken bleibt immer am Boden.","dead"],
+["Einbeinige Glute Bridge","3 × 10 je Seite","Pause 45 s","Hüfte heben, Becken bleibt waagerecht.","Mit Weste für mehr Reiz.","bridge"]]},
+{t:"Erholung",k:"rest",i:"moon",m:"Locker bewegen, regenerieren",ex:[
+["Spaziergang oder lockeres Radeln","20 Min","—","Ganz entspannt, Puls niedrig, frische Luft.","Leichte Bewegung hilft gegen Muskelkater.","walk"],
+["Mobility & Dehnen","10 Min","—","Hüfte, Waden, Brust und Schultern sanft dehnen.","Nicht in den Schmerz hinein dehnen.","stretch"]]},
+{t:"Handballtraining (Mannschaft)",k:"hb",i:"ball",m:"Spielvorbereitung · Fokus Tempo",ex:[
+["Aktivierung & Sprünge","10 Min","—","Hüpfer, Skippings, kurze Sprünge zur Aktivierung.","Leicht bleiben, nicht ermüden.","jsq"],
+["Sperren & Abschlüsse im Spielsystem","15 Min","—","Spielzüge mit Kreisanspiel, Sperren und Abschluss üben.","Klare Absprache mit den Mitspielern.","lunge"],
+["Wurfserie","3 × 6 Würfe","Pause 45 s","Würfe aus Drehung und Absprung auf das Tor.","Ecken anvisieren, Torwart früh lesen.","throw"],
+["Kurze Sprints","4 × 10 m","Pause 60 s","Explosiv, aber nicht bis zur Erschöpfung.","Frisch ins Wochenende starten.","sprint"]]},
+{t:"Spiel (meistens)",k:"spiel",i:"cup",m:"Wettkampf",ex:[
+["Aufwärmen","15 Min","—","Einlaufen, Mobilisation, Sperren- und Wurfeinstimmung.","Schultern vor dem ersten Wurf warm machen.","walk"],
+["Spiel","—","—","Volle Konzentration, Kreis besetzen, Sperren stellen.","Ruhig bleiben, Fehler abhaken.","sprint"],
+["Cool-down & Dehnen","10 Min","—","Lockeres Auslaufen, danach Waden, Oberschenkel, Schultern dehnen.","Trinken und etwas essen.","stretch"]]},
+{t:"Spiel oder Erholung",k:"spiel",i:"cup",m:"Wettkampf oder Ruhe",ex:[
+["Aufwärmen (bei Spiel)","15 Min","—","Wie am Samstag: locker einlaufen und mobilisieren.","Nur bei Spiel, sonst Ruhetag.","walk"],
+["Spiel oder Spaziergang","—","—","Je nach Spielplan.","Höre auf deinen Körper.","sprint"],
+["Cool-down & Dehnen","10 Min","—","Sanftes Auslaufen und Dehnen.","Früh schlafen gehen.","stretch"]]}];
+PLAN[1].ex=[["Mannschaftstraining","—","—","Training mit der Mannschaft. Fokus Kreis: Sperren stellen, Absetzen, Anspiele und Abschlüsse.","Haken setzen, sobald das Training vorbei ist.","sprint"]];
+PLAN[4].ex=[["Mannschaftstraining","—","—","Spielvorbereitung mit der Mannschaft. Fokus Tempo, Spielzüge und Abschlüsse.","Haken setzen, sobald das Training vorbei ist.","sprint"]];
+PLAN[3]={t:"Trainingslager: Sprungkraft & Explosivität",k:"kraft",i:"bolt",m:"35 Min · Matte und 6-kg-Weste",ex:[
+["Pogo-Hops","3 × 20 s","Pause 45 s","Auf den Fußballen schnell und federnd hüpfen, Knie fast gestreckt, den Boden kaum berühren.","Kurze Bodenkontaktzeit, Fersen bleiben oben.","pogo"],
+["Sprung-Kniebeugen mit Weste","4 × 6","Pause 90 s","Tief absenken, dann so hoch wie möglich abspringen und weich landen.","Arme schwingen mit, Landung in die Hocke.","jsq"],
+["Tuck Jumps","3 × 6","Pause 90 s","Aus der Hocke hochspringen und die Knie zur Brust ziehen, weich landen.","Ohne Weste, wenn die Landung unsauber wird.","tuck"],
+["Wechselsprünge im Ausfallschritt","3 × 8 je Bein","Pause 75 s","Im Ausfallschritt abspringen und in der Luft die Beine tauschen.","Oberkörper aufrecht, weich landen.","split"],
+["Sprints 10 m","6 ×","Pause 60 s","Explosiver Antritt aus dem Stand, voll erholt starten.","Qualität vor Menge.","sprint"],
+["Explosive Liegestütze","3 × 5","Pause 90 s","Schnell hochdrücken, bis die Hände kurz abheben.","Ohne Weste ausführen.","xpush"]]};
+IC.bolt='<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>';
+var GOALS=["Stärker im Zweikampf","Schneller werden","Mehr Stabilität","Verletzungsfrei bleiben"];
+var TABS=[["home","house","Übersicht"],["plan","cal","Plan"],["prog","trend","Fortschritt"],["rec","heart","Erholung"]];
+var S={done:{},fin:{},chk:{},goals:{},name:"Kreisläufer Pro"},mem={};
+function ld(){try{var r=localStorage.getItem("kp1");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){if(mem.s)S=mem.s}}
+function sv(){mem.s=S;try{localStorage.setItem("kp1",JSON.stringify(S));return true}catch(e){return false}}
+function ds(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+var now=new Date(),ti=(now.getDay()+6)%7;
+function dayDate(i,wk){var d=new Date(now);d.setDate(now.getDate()-ti+i-7*(wk||0));return ds(d)}
+function $(s){return document.querySelector(s)}
+var v="home",sd=null,se=null;
+function go(x,d,e){v=x;sd=d==null?null:d;se=e==null?null:e;draw();window.scrollTo(0,0)}
+function ck(on){return '<span class="chk'+(on?' on':'')+'">'+(on?'✓':'')+'</span>'}
+function hdr(){return '<div class="top"><span>KREISLÄUFER PRO</span><button onclick="go(\'prof\')" aria-label="Profil">'+svg(IC.gear)+'</button></div>'}
+function draw(){
+var tv=v=="day"||v=="ex"?"plan":v=="prof"?"":v;
+$("#nav").innerHTML=TABS.map(function(t){return '<button class="'+(tv==t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+svg(IC[t[1]])+t[2]+'</button>'}).join("");
+var a=$("#app"),h="";
+if(v=="home"){var p=PLAN[ti];
+h=hdr()+'<div class="hero"><h1>Hey!</h1><div>Schön, dass du da bist.</div><p class="mu">Stark im Kopf. Stark im Körper. Stark im Spiel.</p></div>'
++'<button class="item" onclick="go(\'day\','+ti+')"><span class="ico">'+svg(IC[p.i],28)+'</span><span><b>Heute: '+p.t+'</b><span class="mu">'+p.m+'</span></span></button>'
++'<div class="card"><b>Deine Woche</b><div class="week">'+AB.map(function(n,i){return '<div class="'+(i==ti?'t':'')+(S.fin[dayDate(i)]?' f':'')+'" onclick="go(\'day\','+i+')">'+n+'<small>'+LB[i]+'</small>'+(S.fin[dayDate(i)]?'✓':'·')+'</div>'}).join("")+'</div></div>'
++'<p class="mu" style="text-align:center;margin-top:24px">„Disziplin ist der Schlüssel zu deinem nächsten Level.“</p>'}
+if(v=="plan"){h=hdr()+'<h2>Wochenplan</h2><div class="mu">Dein Trainingsplan auf einen Blick.</div>'+PLAN.map(function(p,i){return '<button class="item" onclick="go(\'day\','+i+')"><span class="ico">'+svg(IC[p.i],28)+'</span><span style="flex:1"><b>'+DAYS[i]+'</b><span class="mu">'+p.t+'</span></span>'+ck(S.fin[dayDate(i)])+'</button>'}).join("")}
+if(v=="day"){var p=PLAN[sd],d=dayDate(sd),n=0;p.ex.forEach(function(e,j){if(S.done[d+"|"+j])n++});
+h='<div class="row"><button class="back" onclick="go(\'plan\')">←</button><h2>'+DAYS[sd]+' – '+p.t+'</h2></div><div class="mu">'+p.m+'</div><p class="mu">'+n+' von '+p.ex.length+' erledigt</p>'
++p.ex.map(function(e,j){return '<button class="item" onclick="go(\'ex\','+sd+','+j+')">'+ck(S.done[d+"|"+j])+'<span><b>'+(j+1)+'. '+e[0]+'</b><span class="mu">'+e[1]+(e[2]!="—"?' · '+e[2]:'')+'</span></span></button>'}).join("")
++'<button class="btn" onclick="fin('+sd+')">'+(S.fin[d]?'Training wieder öffnen':'Training abschließen')+'</button>'}
+if(v=="ex"){var p=PLAN[sd],e=p.ex[se],d=dayDate(sd),on=S.done[d+"|"+se];
+h='<div class="row"><button class="back" onclick="go(\'day\','+sd+')">←</button><b>Übung</b></div><div class="fig">'+fig(e[5])+'</div><h2>'+e[0]+'</h2><div class="card"><b>'+e[1]+'</b> <span class="mu">· '+e[2]+'</span></div><p>'+e[3]+'</p><div class="card">💡 <b>Tipp</b><br>'+e[4]+'</div>'
++'<button class="btn" onclick="tg('+sd+','+se+')">'+(on?'Als offen markieren':'Als erledigt markieren')+'</button>'}
+if(v=="prog"){var wk=0;for(var i=0;i<7;i++)if(S.fin[dayDate(i)])wk++;var c={kraft:0,hb:0,spiel:0};
+for(var k in S.fin){if(!S.fin[k])continue;var q=k.split("-"),g=new Date(+q[0],+q[1]-1,+q[2]),pk=PLAN[(g.getDay()+6)%7].k;if(c[pk]!=null)c[pk]++}
+var o=326.7*(1-wk/7);
+h=hdr()+'<h2>Fortschritt</h2><div class="mu">Deine Entwicklung. Schritt für Schritt.</div><div style="text-align:center;margin:16px 0"><svg width="140" height="140" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="'+o+'" transform="rotate(-90 60 60)"/><text x="60" y="62" text-anchor="middle" fill="var(--tx)" font-size="24" font-weight="700">'+wk+'/7</text><text x="60" y="80" text-anchor="middle" fill="var(--mu)" font-size="9">Trainingstage diese Woche</text></svg></div>'
++'<div class="stats"><div class="card"><b>'+c.kraft+'</b><span class="mu">Krafteinheiten</span></div><div class="card"><b>'+c.hb+'</b><span class="mu">Handballtraining</span></div><div class="card"><b>'+c.spiel+'</b><span class="mu">Spiele</span></div></div><h3>Letzte 4 Wochen</h3><div class="card">';
+for(var w=3;w>=0;w--){var f=0;for(var i=0;i<7;i++)if(S.fin[dayDate(i,w)])f++;var pc=Math.round(f/7*100);h+='<div class="row sp"><span>'+(w==0?'Diese Woche':'Vor '+w+' Woche'+(w>1?'n':''))+'</span><b>'+pc+' %</b></div><div class="bar"><i style="width:'+pc+'%"></i></div>'}
+h+='</div>'}
+if(v=="rec"){var d=dayDate(ti),c=S.chk[d]||{s:8,e:7,m:2,st:8,n:""};
+h=hdr()+'<h2>Erholung</h2><div class="mu">Gib deinem Körper, was er braucht.</div><div class="card"><b>Tages-Check-in</b> <span class="mu">· '+now.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"long",year:"numeric"})+'</span>'
++sl("Schlaf (Stunden)","s",0,12,c.s)+sl("Energie (1–10)","e",1,10,c.e)+sl("Muskelkater (1–10)","m",1,10,c.m)+sl("Stimmung (1–10)","st",1,10,c.st)
++'<p class="mu">Notizen (optional)</p><textarea id="nt" rows="3" placeholder="Wie fühlst du dich heute?"></textarea><button class="btn" id="sb" onclick="svc()">Speichern</button></div><div class="card">💡 <b>Tipps für heute</b><br>Leichte Bewegung, viel trinken und früh schlafen – so bleibst du fit für dein nächstes Training.</div><h3>Verlauf</h3><div id="hs">'+hist()+'</div>'}
+if(v=="prof"){h='<div class="row"><button class="back" onclick="go(\'home\')">←</button><h2>Mein Profil</h2></div><div class="card"><p class="mu" style="margin:0">Name</p><input type="text" id="nm"><p class="mu">Position: Kreisläufer</p></div><h3>Ziele</h3>'+GOALS.map(function(g,i){return '<button class="item" onclick="gl('+i+')">'+ck(S.goals[i])+g+'</button>'}).join("")+'<p class="mu" style="text-align:center;margin-top:20px">„Kleine Schritte, große Ziele.“</p><p class="mu" style="text-align:center">Deine Daten bleiben nur auf diesem Gerät.</p>'}
+if(v=="home")h=homeHTML();a.innerHTML=h;
+if(v=="rec"){var c2=S.chk[dayDate(ti)];if(c2)$("#nt").value=c2.n||""}
+if(v=="prof"){var n=$("#nm");n.value=S.name;n.onchange=function(){S.name=n.value;sv()}}}
+function sl(l,k,a,b,x){return '<p class="mu" style="margin-bottom:0">'+l+': <b id="o'+k+'">'+x+'</b></p><input type="range" id="r'+k+'" min="'+a+'" max="'+b+'" value="'+x+'" oninput="document.getElementById(\'o'+k+'\').textContent=this.value">'}
+function svc(){var g=function(k){return +$("#r"+k).value};S.chk[dayDate(ti)]={s:g("s"),e:g("e"),m:g("m"),st:g("st"),n:$("#nt").value};var ok=sv();$("#sb").textContent=ok?"Gespeichert ✓":"Nur bis zum Schließen gespeichert";$("#hs").innerHTML=hist()}
+function tg(d,e){var k=dayDate(d)+"|"+e;S.done[k]=!S.done[k];sv();go("day",d)}
+function fin(d){var k=dayDate(d);S.fin[k]=!S.fin[k];sv();go("plan")}
+function gl(i){S.goals[i]=!S.goals[i];sv();draw()}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function hist(){var ks=Object.keys(S.chk).sort().reverse().slice(0,14);if(!ks.length)return '<p class="mu">Noch keine Check-ins gespeichert.</p>';
+var l=ks.slice(0,7),av=function(f){return (l.reduce(function(s,k){return s+S.chk[k][f]},0)/l.length).toFixed(1).replace(".",",")};
+var o='<div class="mini" style="margin-bottom:8px"><div><b>'+av("s")+' h</b>Ø Schlaf</div><div><b>'+av("e")+'</b>Ø Energie</div><div><b>'+av("m")+'</b>Ø Muskelkater</div></div>';
+ks.forEach(function(k){var c=S.chk[k];o+='<div class="card"><b>'+new Date(k+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"long"})+'</b><div class="mu">Schlaf '+c.s+' h · Energie '+c.e+'/10 · Muskelkater '+c.m+'/10 · Stimmung '+c.st+'/10</div>'+(c.n?'<div style="margin-top:6px">'+esc(c.n)+'</div>':'')+'</div>'});return o}
+function homeHTML(){var p=PLAN[ti],d=dayDate(ti),n=0,tot=p.ex.length,wk=0,i;
+p.ex.forEach(function(e,j){if(S.done[d+"|"+j])n++});for(i=0;i<7;i++)if(S.fin[dayDate(i)])wk++;
+var pc=Math.round(n/tot*100),hr=now.getHours(),g=hr<11?"Guten Morgen":hr<18?"Hallo":"Guten Abend",bt=S.fin[d]?"Heute erledigt ✓":n?"Weitermachen":p.k=="rest"?"Erholung ansehen":"Training starten";
+return hdr()+'<div class="hero2"><svg class="bg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".8">'+IC.ball+'</svg><div class="mu" style="position:relative">'+now.toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"})+'</div><h1>'+g+',<br>Kreisläufer.</h1><p class="mu" style="position:relative;margin:8px 0 0">Stark im Kopf. Stark im Körper. Stark im Spiel.</p></div>'
++'<div class="today"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="var(--ac)" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="'+(163.4*(1-pc/100))+'" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" fill="var(--tx)" font-size="15" font-weight="700">'+n+'/'+tot+'</text></svg><div style="flex:1"><div class="mu">HEUTE</div><b style="font-size:18px">'+p.t+'</b><div class="mu">'+p.m+'</div></div></div><button class="btn" style="margin-top:0" onclick="go(\'day\','+ti+')">'+bt+'</button>'
++'<div class="mini"><div><b>'+wk+'/7</b>Diese Woche</div><div onclick="go(\'rec\')"><b>'+(S.chk[d]?"✓":"–")+'</b>Check-in</div><div><b>'+AB[(ti+1)%7]+'</b>'+LB[(ti+1)%7]+'</div></div>'
++'<div class="card"><b>Deine Woche</b><div class="week">'+AB.map(function(n,i){return '<div class="'+(i==ti?'t':'')+(S.fin[dayDate(i)]?' f':'')+'" onclick="go(\'day\','+i+')">'+n+'<small>'+LB[i]+'</small>'+(S.fin[dayDate(i)]?'✓':'·')+'</div>'}).join("")+'</div></div><p class="mu" style="text-align:center;margin-top:24px">„Disziplin ist der Schlüssel zu deinem nächsten Level.“</p>'}
+ld();draw();
+</script>
+</body>
+</html>
